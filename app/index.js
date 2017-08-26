@@ -1,6 +1,5 @@
 var buttonElement = document.getElementById('the-button');
 
-//add event listener
 buttonElement.addEventListener('click', (event) => {
 	downloadFile();
 });
@@ -32,7 +31,7 @@ function saveBlobToFile (blob, fileName) {
 		console.log(fs);
 		console.log(fs.root);
 
-		// then we create a empty file and get a fileEntry reference for that file
+		// then we create an empty file and get a fileEntry reference for that file
 		fs.root.getFile(fileName, {create: true}, (fileEntry) => {
 
 			console.log(fileEntry);
@@ -44,7 +43,7 @@ function saveBlobToFile (blob, fileName) {
 
 				writer.onwriteend = (event) => {
 					console.log('file written!', event);
-					// Since the file is stored in a sandboxed folder we need to get the URL to that file
+					// Since the file is stored in a sandboxed folder we need to get the URL to be able to show it back
 					// Using href="/kraken.gif" will return a file not found error
 					showFileToUser(fileEntry.toURL());
 				};
