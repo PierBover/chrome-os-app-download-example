@@ -6,7 +6,7 @@ buttonElement.addEventListener('click', (event) => {
 
 async function downloadFile () {
 	// The file we are going to download. It's big on purpose to see progress.
-	// Yeah, I made that GIF to signal my team to deploy to production on Slack.
+	// I made that GIF to signal my team to deploy to production on Slack
 	const URL = 'http://i.imgur.com/CiOS56r.gif';
 
 	console.log('downloading...', URL);
@@ -20,19 +20,23 @@ async function downloadFile () {
 
 	console.log('response', response);
 
-	saveBlobToFile(response.data, 'kraken.gif');
+	createDirectory('gifs', () => {
+		saveBlobToFile(response.data, 'kraken.gif', 'gifs');
+	});
 }
 
-function saveBlobToFile (blob, fileName) {
+function saveBlobToFile (blob, fileName, directoryName) {
 
-	// First get a file system reference
+	// Get a file system reference
 	window.webkitRequestFileSystem(window.PERSISTENT, blob.size, function (fs) {
 
 		console.log(fs);
 		console.log(fs.root);
 
+		const path = directoryName ? directoryName + '/' + fileName : fileName;
+
 		// then we create an empty file and get a fileEntry reference for that file
-		fs.root.getFile(fileName, {create: true}, (fileEntry) => {
+		fs.root.getFile(path, {create: true}, (fileEntry) => {
 
 			console.log(fileEntry);
 
@@ -54,6 +58,20 @@ function saveBlobToFile (blob, fileName) {
 				writer.write(blob);
 			});
 
+		}, errorHandler);
+
+	}, errorHandler);
+}
+
+function createDirectory (directoryName, doneCallback) {
+
+	// Get a file system reference
+	window.webkitRequestFileSystem(window.PERSISTENT, 1024 * 1024, function (fs) {
+
+		// then we create an empty directory
+		fs.root.getDirectory(directoryName, {create: true}, (directoryEntry) => {
+			console.log('directory created', directoryEntry);
+			doneCallback();
 		}, errorHandler);
 
 	}, errorHandler);
